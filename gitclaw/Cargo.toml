@@ -1,0 +1,33 @@
+[package]
+name = "gitclaw"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "gitclaw"
+path = "src/main.rs"
+
+[lib]
+name = "gitclaw"
+path = "src/lib.rs"
+
+[dependencies]
+pi-ai = { path = "../pi-ai" }
+pi-agent-core = { path = "../pi-agent-core" }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_yaml = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+async-trait = { workspace = true }
+uuid = { workspace = true }
+regex = { workspace = true }
+tokio-util = { workspace = true }
+once_cell = { workspace = true }
+clap = { version = "4", features = ["derive"] }
+rustyline = "15"
+tokio-tungstenite = { version = "0.24", features = ["native-tls"] }
+axum = "0.8"
+futures = "0.3"
+http = "1"

